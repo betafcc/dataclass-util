@@ -1,7 +1,7 @@
 from typing import Callable, Any
 from dataclasses import asdict, replace
 
-from .dict import map as dmap
+from dataclass_util.dict import map as dmap
 
 
 _map = map
