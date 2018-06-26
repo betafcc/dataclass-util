@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Set
+from typing import Callable, Dict, Set, Any
 
 from functools import reduce
 from operator import itemgetter
