@@ -37,6 +37,8 @@ def merge_with(f   : Callable,
         acc = {**a, **b}
     elif how == 'inner':
         acc = {}
+    else:
+        raise ValueError(f"'{how}' not valid merge method for dicts")
 
     return {**acc, **map(f, a, b)}
 
