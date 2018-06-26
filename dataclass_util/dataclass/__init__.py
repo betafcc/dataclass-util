@@ -25,3 +25,10 @@ def merge_with(f   : Callable,
         return map(lambda _b, _a: f(_a, _b), b, a)
 
     raise ValueError(f"'{how}' not valid merge method for dataclasses")
+
+
+def broadcast(op     : Callable,
+              d      : Any,
+              scalar : Any,
+              ) -> Dict:
+    return map(lambda el: op(el, scalar), d)
