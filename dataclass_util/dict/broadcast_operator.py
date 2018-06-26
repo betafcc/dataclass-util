@@ -2,7 +2,7 @@ from functools import wraps
 
 from . import broadcast
 from . import map as dmap
-from . import operator_names
+from dataclass_util import operator_names
 
 
 def _unary(op):

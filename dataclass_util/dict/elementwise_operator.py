@@ -1,7 +1,7 @@
 from functools import wraps
 
 from . import merge_with
-from . import operator_names
+from dataclass_util import operator_names
 
 
 def _binary(op):
