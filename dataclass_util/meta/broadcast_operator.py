@@ -1,32 +1,33 @@
+from types import SimpleNamespace
 from functools import wraps
 
 from dataclass_util import operator_names
 
 
-def _unary(op, map):
-    @wraps(op)
-    def __unary(d):
-        return map(op, d)
-    return __unary
-
-
-def _binary(op, map):
-    @wraps(op)
-    def __binary(d, scalar):
-        def _op(el):
-            return op(el, scalar)
-        return map(_op, d)
-    return __binary
-
-
 def broadcast_operators(map):
-    return {
+    def unary(op):
+        @wraps(op)
+        def _unary(d):
+            return map(op, d)
+        return _unary
+
+
+    def binary(op):
+        @wraps(op)
+        def _binary(d, scalar):
+            def _op(el):
+                return op(el, scalar)
+            return map(_op, d)
+        return _binary
+
+
+    return SimpleNamespace(
         **{
-            name: _unary(op, map)
+            name: unary(op)
             for name, op in operator_names.unary.items()
         },
         **{
-            name: _binary(op, map)
+            name:  binary(op)
             for name, op in operator_names.binary.items()
         },
-    }
+    )
