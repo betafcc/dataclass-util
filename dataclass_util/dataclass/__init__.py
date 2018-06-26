@@ -1,4 +1,4 @@
-from typing import Callable, Any
+from typing import Callable, Any, Dict
 from dataclasses import asdict, replace
 
 from dataclass_util.dict import map as dict_map
