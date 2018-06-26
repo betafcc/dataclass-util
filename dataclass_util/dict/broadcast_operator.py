@@ -5,7 +5,25 @@ from . import map as dmap
 from . import operator_names
 
 
-_locals = locals()
+def _unary(op):
+    @wraps(op)
+    def __unary(d):
+        return dmap(op, d)
+    return __unary
+
 
 for name, op in operator_names.unary.items():
-    _locals[name] = wraps(op)(lambda d: dmap(op, d))
+    locals()[name] = _unary(op)
+
+
+def _binary(op):
+    @wraps(op)
+    def __binary(d, scalar):
+        def _op(el):
+            return op(el, scalar)
+        return dmap(_op, d)
+    return __binary
+
+
+for name, op in operator_names.binary.items():
+    locals()[name] = _binary(op)
