@@ -39,3 +39,10 @@ def merge_with(f   : Callable,
         acc = {}
 
     return {**acc, **map(f, a, b)}
+
+
+def broadcast(op     : Callable,
+              d      : Dict,
+              scalar : Any,
+              ) -> Dict:
+    return map(lambda el: op(el, scalar), d)
