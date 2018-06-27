@@ -1,4 +1,4 @@
-from dataclass_util.meta.broadcast_operator import broadcast_operators
+from dataclass_util.meta import broadcast_operators
 from . import map as _map
 
 
