@@ -10,18 +10,15 @@ _map = map
 def map(f : Callable,
         *dicts : Dict,
         ) -> Dict:
-    common_keys = reduce(_intersection, _map(set, dicts))
+    common_keys = reduce(
+        lambda acc, n: acc.intersection(n),
+        _map(set, dicts),
+    )
 
     return {
         key: f(*_map(itemgetter(key), dicts))
         for key in common_keys
     }
-
-
-def _intersection(a : Set,
-                  b : Set,
-                  ) -> Set:
-    return a.intersection(b)
 
 
 def merge_with(f   : Callable,
