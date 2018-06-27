@@ -4,6 +4,19 @@ from functools import wraps
 from dataclass_util import operator_names
 
 
+def elementwise_operators(merge_with):
+    def binary(op):
+        @wraps(op)
+        def _binary(da, db, how='left'):
+            return merge_with(op, da, db, how=how)
+        return _binary
+
+    return SimpleNamespace(**{
+        name: binary(op)
+        for name, op in operator_names.binary.items()
+    })
+
+
 def broadcast_operators(map):
     def unary(op):
         @wraps(op)
