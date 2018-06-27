@@ -1,23 +1,25 @@
-from types import SimpleNamespace
+from types import ModuleType
 from functools import wraps
 
 from dataclass_util import operator_names
 
 
-def elementwise_operators(merge_with):
+def elementwise_operators(merge_with, name='elementwise_operator', doc=None):
     def binary(op):
         @wraps(op)
         def _binary(da, db, how='left'):
             return merge_with(op, da, db, how=how)
         return _binary
 
-    return SimpleNamespace(**{
-        name: binary(op)
-        for name, op in operator_names.binary.items()
-    })
+
+    module = ModuleType(name, doc=doc)
+    for name, op in operator_names.binary.items():
+        setattr(module, name, op)
+
+    return module
 
 
-def broadcast_operators(map):
+def broadcast_operators(map, name='broadcast_operator', doc=None):
     def unary(op):
         @wraps(op)
         def _unary(d):
@@ -34,13 +36,8 @@ def broadcast_operators(map):
         return _binary
 
 
-    return SimpleNamespace(
-        **{
-            name: unary(op)
-            for name, op in operator_names.unary.items()
-        },
-        **{
-            name:  binary(op)
-            for name, op in operator_names.binary.items()
-        },
-    )
+    module = ModuleType(name, doc=doc)
+    for name, op in [*operator_names.unary.items(), *operator_names.binary.items()]:
+        setattr(module, name, op)
+
+    return module
