@@ -14,7 +14,7 @@ def elementwise_operators(merge_with, name='elementwise_operator', doc=None):
 
     module = ModuleType(name, doc=doc)
     for name, op in operator_names.binary.items():
-        setattr(module, name, op)
+        setattr(module, name, binary(op))
 
     return module
 
@@ -37,7 +37,9 @@ def broadcast_operators(map, name='broadcast_operator', doc=None):
 
 
     module = ModuleType(name, doc=doc)
-    for name, op in [*operator_names.unary.items(), *operator_names.binary.items()]:
-        setattr(module, name, op)
+    for name, op in operator_names.unary.items():
+        setattr(module, name, unary(op))
+    for name, op in operator_names.binary.items():
+        setattr(module, name, binary(op))
 
     return module
