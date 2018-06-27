@@ -1,15 +1,7 @@
-from functools import wraps
-
-from . import merge_with
-from dataclass_util import operator_names
+from dataclass_util.dict.elementwise_operator import elementwise_operators
+from . import _merge_with
 
 
-def _binary(op):
-    @wraps(op)
-    def __binary(da, db, how='left'):
-        return merge_with(op, da, db, how=how)
-    return __binary
-
-
-for name, op in operator_names.binary.items():
-    locals()[name] = _binary(op)
+_locals = locals()
+for name, op in elementwise_operators(merge_with).__dict__.items():
+    _locals[name] = op
