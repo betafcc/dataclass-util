@@ -2,7 +2,7 @@ from types import SimpleNamespace
 from operator import eq
 
 
-def make_module(asdict, getattr=getattr):
+def make_module(*, asdict, getattr=getattr):
     def is_key_submap(a, b):
         return is_submap_by(lambda _a, _b: True, a, b)
 
