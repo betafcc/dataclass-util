@@ -1,4 +1,4 @@
-from dataclass import replace, asdict
+from dataclasses import replace, asdict
 
 from .meta.operator import make_module
 
