@@ -3,7 +3,7 @@ from operator import eq, lt, le
 
 import pytest
 
-from dataclass_util.is_submap import is_submap_of_by
+from dataclass_util.is_submap import is_submap_by
 
 
 @dataclass
@@ -28,5 +28,17 @@ class AB:
     (lt, A(a=1),       AB(a=1, b=2), False),
     (eq, AB(a=1, b=2), A(a=1),       False),
 ])
-def test_is_submap_of_by(operator, a, b, expected):
-    assert is_submap_of_by(operator, a, b) == expected
+def test_is_submap_by(operator, a, b, expected):
+    assert is_submap_by(operator, a, b) == expected
+
+
+# @pytest.mark.parametrize('operator, a, b, expected', [
+#     (eq, , , True),
+#     (le, , , True),
+
+#     (eq, , , False),
+#     (eq, , , False),
+#     (lt, , , False),
+# ])
+# def test_is_proper_submap_by(operator, a, b, expected):
+#     assert test_is_proper_submap_by(operator, a, b) == expected
