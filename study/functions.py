@@ -20,17 +20,3 @@ def elementwise(op):
 
 def broadcast(op):
     return lambda obj, *scalars: map(lambda v: op(v, *scalars), obj)
-
-
-@dataclass(frozen=True, order=True, eq=True)
-class Rectangle:
-    x      : int
-    y      : int
-    width  : int
-    height : int
-
-
-
-
-print(elementwise(lambda a, b: a + b)(Rectangle(0, 0, 600, 400), Rectangle(1, 2, 3, 4)))
-print(broadcast(lambda a, b, c: (a * b) ** c)(Rectangle(1, 2, 3, 4), 2, 2))
