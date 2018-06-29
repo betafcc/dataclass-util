@@ -1,12 +1,10 @@
-import builtins
-from operator import attrgetter
 from types import SimpleNamespace
 
 
-def make_module(*, replace, asdict=lambda obj: obj.__dict__):
+def make_module(*, replace, asdict=lambda obj: obj.__dict__, getattr=getattr):
     def map_with_key(f, *objs):
         return replace(objs[0], **{
-            k: f(k, *builtins.map(attrgetter(k), objs))
+            k: f(k, *(getattr(obj, k) for obj in objs))
             for k in asdict(objs[0])
         })
 
