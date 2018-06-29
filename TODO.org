@@ -1,0 +1,20 @@
+* TODO [0/1]
+  - [ ] functions [0/3]
+    - [ ] from_dict(dict, **kwargs)
+      Creates a dataclass based on the types in dict and
+      creates a instance from it values
+
+    - [ ] from_dict_example(dict, **kwargs)
+      Creates a dataclass based on the types in dict
+
+    - [ ] from_dict_template(dict, **kwargs)
+      Creates a dataclass based on a dict template
+
+      from_dict_template({'x': int, 'y': int}, name='Point', **kwargs)
+
+      equivalent to
+
+      @dataclass(**kwargs)
+      class Point:
+          x: int
+          y: int
