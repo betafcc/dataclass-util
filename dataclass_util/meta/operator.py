@@ -13,8 +13,12 @@ def make_module(*, replace, asdict=lambda obj: obj.__dict__, getattr=getattr):
         return map_with_key(lambda _, *vs: f(*vs), *objs)
 
 
-    def elementwise(op):
-        return lambda *objs: map(op, *objs)
+    def merge_with(f, *objs, how='left'):
+        raise NotImplementedError
+
+
+    def elementwise(op, how='left'):
+        return lambda *objs: merge_with(op, *objs, how=how)
 
 
     def broadcast(op):
