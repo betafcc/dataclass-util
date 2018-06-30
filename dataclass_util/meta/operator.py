@@ -1,10 +1,8 @@
-from builtins import map as _map
 from functools import reduce
-from operator import itemgetter
 from types import SimpleNamespace
 
 
-def make_module(*, replace, asdict=lambda obj: obj.__dict__, getattr=getattr):
+def make_module(*, replace, asdict=lambda obj: obj.__dict__):
     def map_with_key(f, obj):
         d = asdict(obj)
 
@@ -28,11 +26,11 @@ def make_module(*, replace, asdict=lambda obj: obj.__dict__, getattr=getattr):
                 f"Methow how='{how}' not supported, use 'left' or 'right'"
             )
 
-        dicts  = list(_map(asdict, objs))
-        common = reduce(lambda acc, n: acc.intersection(n), _map(set, dicts))
+        dicts  = [asdict(obj) for obj in objs]
+        common = reduce(lambda acc, n: acc.intersection(n), (set(d) for d in dicts))
 
         return replace(acc, **{
-            k: f(k, *_map(itemgetter(k), dicts))
+            k: f(k, *(d[k] for d in dicts))
             for k in common
         })
 
@@ -47,5 +45,6 @@ def make_module(*, replace, asdict=lambda obj: obj.__dict__, getattr=getattr):
 
     def broadcast(op):
         return lambda obj, *scalars: map(lambda v: op(v, *scalars), obj)
+
 
     return SimpleNamespace(**locals())
