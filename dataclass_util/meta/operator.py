@@ -16,7 +16,7 @@ def make_module(*, replace, asdict=lambda obj: obj.__dict__, getattr=getattr):
         return map_with_key(lambda _, *vs: f(*vs), *objs)
 
 
-    def merge_by(f, *objs, how='left'):
+    def merge_by_with_key(f, *objs, how='left'):
         if how == 'left':
             acc = objs[0]
         elif how == 'right':
@@ -30,9 +30,13 @@ def make_module(*, replace, asdict=lambda obj: obj.__dict__, getattr=getattr):
         common = reduce(lambda acc, n: acc.intersection(n), _map(set, dicts))
 
         return replace(acc, **{
-            k: f(*_map(itemgetter(k), dicts))
+            k: f(k, *_map(itemgetter(k), dicts))
             for k in common
         })
+
+
+    def merge_by(f, *objs, how='left'):
+        return merge_by_with_key(lambda _, *vs: f(*vs), *objs, how=how)
 
 
     def elementwise(op, how='left'):
