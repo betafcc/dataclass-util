@@ -2,7 +2,7 @@ from types import SimpleNamespace
 from operator import eq
 
 
-def make_module(*, asdict, getattr=getattr):
+def make_module(*, asdict):
     def is_key_submap(a, b):
         return is_submap_by(lambda _a, _b: True, a, b)
 
@@ -12,14 +12,12 @@ def make_module(*, asdict, getattr=getattr):
 
 
     def is_submap_by(f, a, b):
-        for k, v in asdict(a).items():
-            try:
-                if not f(getattr(b, k), v):
-                    return False
-            except AttributeError:
-                return False
+        da, db = asdict(a), asdict(b)
 
-        return True
+        return all(
+            key in db and f(da[key], db[key])
+            for key in da
+        )
 
 
     def is_proper_submap(a, b):
