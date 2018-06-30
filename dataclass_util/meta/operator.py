@@ -1,3 +1,6 @@
+from builtins import map as _map
+from functools import reduce
+from operator import itemgetter
 from types import SimpleNamespace
 
 
@@ -14,7 +17,22 @@ def make_module(*, replace, asdict=lambda obj: obj.__dict__, getattr=getattr):
 
 
     def merge_with(f, *objs, how='left'):
-        raise NotImplementedError
+        if how == 'left':
+            acc = objs[0]
+        elif how == 'right':
+            acc = objs[-1]
+        else:
+            raise ValueError(
+                f"Methow how='{how}' not supported, use 'left' or 'right'"
+            )
+
+        dicts  = list(_map(asdict, objs))
+        common = reduce(lambda acc, n: acc.intersection(n), _map(set, dicts))
+
+        return replace(acc, **{
+            k: f(*_map(itemgetter(k), dicts))
+            for k in common
+        })
 
 
     def elementwise(op, how='left'):
