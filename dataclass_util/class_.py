@@ -1,29 +1,40 @@
 import operator
 
-from dataclass_util.operator import elementwise as _elementwise
+import dataclass_util.operator as wrap
 
 
-def elementwise(cls):
-    cls = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
+operations = frozenset({
+    '__add__',
+    '__sub__',
+    '__mul__',
+    '__matmul__',
+    '__truediv__',
+    '__floordiv__',
+    '__mod__',
+    # '__divmod__',
+    '__pow__',
+    '__lshift__',
+    '__rshift__',
+    '__and__',
+    '__xor__',
+    '__or__',
+})
 
-    names = {
-        '__add__',
-        '__sub__',
-        '__mul__',
-        '__matmul__',
-        '__truediv__',
-        '__floordiv__',
-        '__mod__',
-        # '__divmod__',
-        '__pow__',
-        '__lshift__',
-        '__rshift__',
-        '__and__',
-        '__xor__',
-        '__or__',
-    }
 
-    for name in names:
-        setattr(cls, name, _elementwise(getattr(operator, name)))
+def elementwise(fields=None,
+                *,
+                on=lambda self, other: True,
+                include=operations,
+                exclude=frozenset(),
+                ):
+    def _elementwise(cls):
+        cls = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
 
-    return cls
+        for op_name in set(include) - set(exclude):
+            setattr(cls, op_name, wrap.elementwise(getattr(operator, op_name)))
+
+        return cls
+
+    if callable(fields):
+        return _elementwise(fields)
+    return _elementwise
