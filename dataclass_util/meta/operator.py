@@ -16,7 +16,7 @@ def make_module(*, replace, asdict=lambda obj: obj.__dict__):
         return map_with_key(lambda _, v: f(v), obj)
 
 
-    def merge_by_with_key(f, *objs, how='left'):
+    def merge_with_key_by(f, *objs, how='left'):
         if how == 'left':
             acc = objs[0]
         elif how == 'right':
@@ -36,7 +36,7 @@ def make_module(*, replace, asdict=lambda obj: obj.__dict__):
 
 
     def merge_by(f, *objs, how='left'):
-        return merge_by_with_key(lambda _, *vs: f(*vs), *objs, how=how)
+        return merge_with_key_by(lambda _, *vs: f(*vs), *objs, how=how)
 
 
     def elementwise(op, how='left'):
