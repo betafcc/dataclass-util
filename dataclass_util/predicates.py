@@ -1,6 +1,6 @@
 from dataclasses import asdict
 
-from .meta.is_submap import make_module
+from .meta.predicates import make_module
 
 
 locals().update(make_module(asdict=asdict).__dict__)

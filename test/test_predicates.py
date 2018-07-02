@@ -3,7 +3,7 @@ from operator import eq, lt, le
 
 import pytest
 
-from dataclass_util.is_submap import is_submap_by
+from dataclass_util.predicates import is_submap_by
 
 
 @dataclass
