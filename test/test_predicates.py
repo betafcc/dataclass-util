@@ -3,7 +3,7 @@ from operator import eq, lt, le
 
 import pytest
 
-from dataclass_util.predicates import is_submap_by
+from dataclass_util.predicates import is_submap_by, has_common_keys
 
 
 @dataclass
@@ -37,6 +37,17 @@ class C:
 ])
 def test_is_submap_by(operator, a, b, expected):
     assert is_submap_by(operator, a, b) == expected
+
+
+@pytest.mark.parametrize('a, b, expected', [
+    (A(1), AB(1, 1), True),
+    (A(1), AB(2, 2), True),
+    (A(1), C(1), False),
+    (AB(1, 1), C(1), False),
+])
+def test_has_common_keys(a, b, expected):
+    assert has_common_keys(a, b) == expected
+    assert has_common_keys(b, a) == expected
 
 
 # @pytest.mark.parametrize('operator, a, b, expected', [
