@@ -20,6 +20,15 @@ def make_module(*, asdict):
         )
 
 
+    def has_common_keys(a, b):
+        try:
+            a, b = asdict(a), asdict(b)
+        except TypeError:
+            return False
+
+        return any(k in b for k in a)     
+
+
     def is_proper_submap(a, b):
         return is_proper_submap_by(eq, a, b)
 
