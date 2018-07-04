@@ -38,3 +38,12 @@ def elementwise(fields=None,
     if callable(fields):
         return _elementwise(fields)
     return _elementwise
+
+
+def default_exception(name):
+    def _default_exception(self, other):
+        raise TypeError(
+            f"'{name}' not implemented for " +
+            f"'{type(self).__name__}' and '{type(other).__name__}'"
+        )
+    return _default_exception
