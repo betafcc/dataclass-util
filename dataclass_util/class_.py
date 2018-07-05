@@ -31,10 +31,21 @@ def elementwise(fields=None,
         cls = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
 
         for op_name in set(include) - set(exclude):
-            setattr(cls, op_name, wrap.elementwise(getattr(operator, op_name)))
+            try:
+                fallback = getattr(cls, op_name)
+            except AttributeError:
+                fallback = default_exception(op_name)
+
+            f = if_(cond=on,
+                    on_true=wrap.elementwise(getattr(operator, op_name)),
+                    on_false=fallback,
+                    )
+
+            setattr(cls, op_name, f)
 
         return cls
 
+    # if used as decorator without arguments
     if callable(fields):
         return _elementwise(fields)
     return _elementwise
