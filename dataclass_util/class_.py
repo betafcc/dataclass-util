@@ -40,6 +40,15 @@ def elementwise(fields=None,
     return _elementwise
 
 
+def if_(cond, on_true, on_false):
+    def _if_(*args, **kwargs):
+        if cond(*args, **kwargs):
+            return on_true(*args, **kwargs)
+        else:
+            return on_false(*args, **kwargs)
+    return _if_
+
+
 def default_exception(name):
     def _default_exception(self, other):
         raise TypeError(
