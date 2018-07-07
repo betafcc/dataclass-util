@@ -47,3 +47,21 @@ def test_elementwise(operator, a, b, expected):
     assert result == expected
     assert result != a
     assert result != b
+
+
+def test_selected_fields():
+    @elementwise('x y')
+    @dataclass
+    class NamedPoint:
+        name : str
+        x    : int
+        y    : int
+
+    origin = NamedPoint('origin', 0, 0)
+    home   = NamedPoint('home', 320, 910)
+
+    assert home + origin == home
+
+
+    assert home + Point(11, 22) == NamedPoint('home', 331, 932)
+    assert Point(11, 22) + home == Point(331, 932)

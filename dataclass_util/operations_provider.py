@@ -28,10 +28,11 @@ def operations_provider(operator_wrapper):
                        include=operations,
                        exclude=frozenset()
                        ):
+        _fields = None
         if isinstance(fields, str):
-            fields = fields.split()
-        if isinstance(fields, Iterable):
-            fields = set(fields)
+            _fields = set(fields.split())
+        elif isinstance(fields, Iterable):
+            _fields = set(fields)
 
         def _set_operations(cls):
             # Copy the class, don't wanna modify the original
@@ -40,7 +41,7 @@ def operations_provider(operator_wrapper):
             # Sets the selected methods
             for op_name in set(include) - set(exclude):
                 new_method = if_(condition=on,
-                                 on_true=operator_wrapper(getattr(operator, op_name), keys=fields),
+                                 on_true=operator_wrapper(getattr(operator, op_name), keys=_fields),
                                  # fallback to current method on 'cls'
                                  on_false=getattr(cls, op_name, not_implemented(op_name)),
                                  )

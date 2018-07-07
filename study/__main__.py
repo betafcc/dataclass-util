@@ -1,8 +1,13 @@
 import operator
 from dataclasses import dataclass, asdict
 
+import dataclass_util.operator as wrapper 
 from dataclass_util.predicates import has_common_keys
-from dataclass_util.class_ import elementwise, broadcast
+from dataclass_util.operations_provider import operations_provider
+
+
+elementwise = operations_provider(wrapper.elementwise)
+broadcast   = operations_provider(wrapper.broadcast)
 
 
 @elementwise(on=has_common_keys)
