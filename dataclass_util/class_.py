@@ -21,6 +21,36 @@ operations = frozenset({
 })
 
 
+def broadcast(fields=None,
+              *,
+              on=lambda self, other: True,
+              include=operations,
+              exclude=frozenset(),
+              ):
+    def _broadcast(cls):
+        cls = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
+
+        for op_name in set(include) - set(exclude):
+            try:
+                fallback = getattr(cls, op_name)
+            except AttributeError:
+                fallback = default_exception(op_name)
+
+            f = if_(cond=on,
+                    on_true=wrap.broadcast(getattr(operator, op_name)),
+                    on_false=fallback,
+                    )
+
+            setattr(cls, op_name, f)
+
+        return cls
+
+    # if used as decorator without arguments
+    if callable(fields):
+        return _broadcast(fields)
+    return _broadcast
+
+
 def elementwise(fields=None,
                 *,
                 on=lambda self, other: True,
