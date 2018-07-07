@@ -1,33 +1,11 @@
 import operator
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
-from dataclass_util.operator import elementwise
-
-
-# def elementwise(fields, on, methods):
-#     def _elementwise(cls):
-#         return cls
-#     return _elementwise
+from dataclass_util.class_ import elementwise, broadcast
 
 
-# @elementwise(
-#     fields=['x', 'y'],
-#     on=lambda self, other: is_submap(self, other),
-#     methods=['__add__', '__sub__', '__mul__'],
-# )
-
-
-def elementwisefy(cls):
-    cls = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
-
-    for op in ['add', 'sub', 'mul', 'truediv', 'floordiv', 'matmul', 'pow']:
-        op = f'__{op}__'
-        setattr(cls, op, elementwise(getattr(operator, op)))
-
-    return cls
-
-
-@elementwisefy
+@elementwise(on=has_common_keys)
+@broadcast
 @dataclass(frozen=True, eq=True, order=True)
 class Rectangle:
     x      : int
@@ -36,11 +14,20 @@ class Rectangle:
     height : int
 
 
-ERectangle = elementwisefy(Rectangle)
+@dataclass
+class Point:
+    x : int
+    y : int
 
 
 print(
-    ERectangle(1, 2, 400, 600)
-    +
-    ERectangle(3, 5, 100, 200)
+    Rectangle(1, 2, 400, 600)
+    *
+    Point(10, 20)
+)
+
+print(
+    Rectangle(1, 2, 400, 600)
+    *
+    2
 )

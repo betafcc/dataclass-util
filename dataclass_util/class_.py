@@ -31,10 +31,7 @@ def broadcast(fields=None,
         cls = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
 
         for op_name in set(include) - set(exclude):
-            try:
-                fallback = getattr(cls, op_name)
-            except AttributeError:
-                fallback = default_exception(op_name)
+            fallback = getattr(cls, op_name, default_exception(op_name))
 
             f = if_(cond=on,
                     on_true=wrap.broadcast(getattr(operator, op_name)),
@@ -61,10 +58,7 @@ def elementwise(fields=None,
         cls = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
 
         for op_name in set(include) - set(exclude):
-            try:
-                fallback = getattr(cls, op_name)
-            except AttributeError:
-                fallback = default_exception(op_name)
+            fallback = getattr(cls, op_name, default_exception(op_name))
 
             f = if_(cond=on,
                     on_true=wrap.elementwise(getattr(operator, op_name)),
