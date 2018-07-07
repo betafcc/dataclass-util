@@ -21,7 +21,7 @@ operations = frozenset({
 })
 
 
-def operations_provider(operator_decorator):
+def operations_provider(operator_wrapper):
 
     def class_decorator(fields=None,
                         *,
@@ -35,17 +35,13 @@ def operations_provider(operator_decorator):
 
             # Sets the selected methods
             for op_name in set(include) - set(exclude):
-                # Decorates the operation from stdlib operator module
-                main     = operator_decorator(getattr(operator, op_name))
-                # Fallback to be existing implementation of current 'op_name' in 'cls'
-                fallback = getattr(cls, op_name, default_exception(op_name))
+                new_method = if_(condition=on,
+                                 on_true=operator_wrapper(getattr(operator, op_name)),
+                                 # fallback to current method on 'cls'
+                                 on_false=getattr(cls, op_name, not_implemented(op_name)),
+                                 )
 
-                method = if_(cond=on,
-                             on_true=main,
-                             on_false=fallback,
-                             )
-
-                setattr(cls, op_name, method)
+                setattr(cls, op_name, new_method)
 
             return cls
 
@@ -61,23 +57,19 @@ broadcast   = operations_provider(wrap.broadcast)
 elementwise = operations_provider(wrap.elementwise)
 
 
-def wrapattr(wrapper, *args):
-    return wrapper(getattr(*args))
-
-
-def if_(cond, on_true, on_false):
+def if_(condition, on_true, on_false):
     def _if_(*args, **kwargs):
-        if cond(*args, **kwargs):
+        if condition(*args, **kwargs):
             return on_true(*args, **kwargs)
         else:
             return on_false(*args, **kwargs)
     return _if_
 
 
-def default_exception(name):
-    def _default_exception(self, other):
+def not_implemented(name):
+    def _not_implemented(self, other):
         raise TypeError(
             f"'{name}' not implemented for " +
             f"'{type(self).__name__}' and '{type(other).__name__}'"
         )
-    return _default_exception
+    return _not_implemented
