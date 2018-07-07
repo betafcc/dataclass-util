@@ -61,6 +61,10 @@ broadcast   = operations_provider(wrap.broadcast)
 elementwise = operations_provider(wrap.elementwise)
 
 
+def wrapattr(wrapper, *args):
+    return wrapper(getattr(*args))
+
+
 def if_(cond, on_true, on_false):
     def _if_(*args, **kwargs):
         if cond(*args, **kwargs):
