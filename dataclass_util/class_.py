@@ -21,58 +21,44 @@ operations = frozenset({
 })
 
 
-def broadcast(fields=None,
-              *,
-              on=lambda self, other: True,
-              include=operations,
-              exclude=frozenset(),
-              ):
-    def _broadcast(cls):
-        cls = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
+def operations_provider(operator_decorator):
 
-        for op_name in set(include) - set(exclude):
-            fallback = getattr(cls, op_name, default_exception(op_name))
+    def class_decorator(fields=None,
+                        *,
+                        on=lambda self, other: True,
+                        include=operations,
+                        exclude=frozenset()
+                        ):
+        def _class_decorator(cls):
+            # Copy the class, don't wanna modify the original
+            cls = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
 
-            f = if_(cond=on,
-                    on_true=wrap.broadcast(getattr(operator, op_name)),
-                    on_false=fallback,
-                    )
+            # Sets the selected methods
+            for op_name in set(include) - set(exclude):
+                # Decorates the operation from stdlib operator module
+                main     = operator_decorator(getattr(operator, op_name))
+                # Fallback to be existing implementation of current 'op_name' in 'cls'
+                fallback = getattr(cls, op_name, default_exception(op_name))
 
-            setattr(cls, op_name, f)
+                method = if_(cond=on,
+                             on_true=main,
+                             on_false=fallback,
+                             )
 
-        return cls
+                setattr(cls, op_name, method)
 
-    # if used as decorator without arguments
-    if callable(fields):
-        return _broadcast(fields)
-    return _broadcast
+            return cls
+
+        # if used as decorator without arguments
+        if callable(fields):
+            return _class_decorator(fields)
+        return _class_decorator
+
+    return class_decorator
 
 
-def elementwise(fields=None,
-                *,
-                on=lambda self, other: True,
-                include=operations,
-                exclude=frozenset(),
-                ):
-    def _elementwise(cls):
-        cls = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
-
-        for op_name in set(include) - set(exclude):
-            fallback = getattr(cls, op_name, default_exception(op_name))
-
-            f = if_(cond=on,
-                    on_true=wrap.elementwise(getattr(operator, op_name)),
-                    on_false=fallback,
-                    )
-
-            setattr(cls, op_name, f)
-
-        return cls
-
-    # if used as decorator without arguments
-    if callable(fields):
-        return _elementwise(fields)
-    return _elementwise
+broadcast   = operations_provider(wrap.broadcast)
+elementwise = operations_provider(wrap.elementwise)
 
 
 def if_(cond, on_true, on_false):

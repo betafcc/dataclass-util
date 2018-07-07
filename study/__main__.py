@@ -1,6 +1,7 @@
 import operator
 from dataclasses import dataclass, asdict
 
+from dataclass_util.predicates import has_common_keys
 from dataclass_util.class_ import elementwise, broadcast
 
 
