@@ -1,7 +1,5 @@
 import operator
 
-import dataclass_util.operator as wrap
-
 
 operations = frozenset({
     '__add__',
@@ -51,10 +49,6 @@ def operations_provider(operator_wrapper):
         return _set_operations
 
     return set_operations
-
-
-broadcast   = operations_provider(wrap.broadcast)
-elementwise = operations_provider(wrap.elementwise)
 
 
 def if_(condition, on_true, on_false):

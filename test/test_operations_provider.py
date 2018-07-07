@@ -3,7 +3,11 @@ from operator import add, sub, mul
 
 import pytest
 
-from dataclass_util.class_ import elementwise
+import dataclass_util.operator as wrapper
+from dataclass_util.operations_provider import operations_provider
+
+
+elementwise = operations_provider(wrapper.elementwise)
 
 
 @elementwise
