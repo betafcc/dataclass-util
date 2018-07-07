@@ -8,6 +8,7 @@ from dataclass_util.operations_provider import operations_provider
 
 
 elementwise = operations_provider(wrapper.elementwise)
+broadcast   = operations_provider(wrapper.broadcast)
 
 
 @elementwise
@@ -65,3 +66,13 @@ def test_selected_fields():
 
     assert home + Point(11, 22) == NamedPoint('home', 331, 932)
     assert Point(11, 22) + home == Point(331, 932)
+
+
+    @broadcast('x y')
+    @dataclass
+    class NamedPoint:
+        name : str
+        x    : int
+        y    : int
+
+    assert NamedPoint('foo', 2, 3) ** 2 == NamedPoint('foo', 4, 9)
