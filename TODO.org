@@ -1,11 +1,4 @@
 * TODO [0/3]
-  - [ ] class_ [0/4]
-    - [ ] @elementwise basic test
-    - [ ] @broadcast basic test
-
-    - [ ] @elementwise basic implementation
-    - [ ] @broadcast basic implementation
-
   - [ ] operator [0/2]
     - [ ] elementiwise 'keys' argument
     - [ ] broadcast 'keys' argument

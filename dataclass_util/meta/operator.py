@@ -39,12 +39,25 @@ def make_module(*, replace, asdict=lambda obj: obj.__dict__):
         return merge_with_key_by(lambda _, *vs: f(*vs), *objs, how=how)
 
 
-    def elementwise(op, how='left'):
-        return lambda *objs: merge_by(op, *objs, how=how)
+    def elementwise(op, keys=None, how='left'):
+        if keys is None:
+            return lambda *objs: merge_by(op, *objs, how=how)
+
+        return lambda *objs: merge_with_key_by(
+            lambda k, a, b: op(a, b) if k in keys else a,
+            *objs,
+            how=how,
+        )
 
 
-    def broadcast(op):
-        return lambda obj, *scalars: map(lambda v: op(v, *scalars), obj)
+    def broadcast(op, keys=None):
+        if keys is None:
+            return lambda obj, *scalars: map(lambda v: op(v, *scalars), obj)
+
+        return lambda obj, *scalars: map_with_key(
+            lambda k, v: op(v, *scalars) if k in keys else v,
+            obj,
+        )
 
 
     return SimpleNamespace(**locals())
