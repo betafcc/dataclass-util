@@ -23,13 +23,13 @@ operations = frozenset({
 
 def operations_provider(operator_wrapper):
 
-    def class_decorator(fields=None,
-                        *,
-                        on=lambda self, other: True,
-                        include=operations,
-                        exclude=frozenset()
-                        ):
-        def _class_decorator(cls):
+    def set_operations(fields=None,
+                       *,
+                       on=lambda self, other: True,
+                       include=operations,
+                       exclude=frozenset()
+                       ):
+        def _set_operations(cls):
             # Copy the class, don't wanna modify the original
             cls = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
 
@@ -47,10 +47,10 @@ def operations_provider(operator_wrapper):
 
         # if used as decorator without arguments
         if callable(fields):
-            return _class_decorator(fields)
-        return _class_decorator
+            return _set_operations(fields)
+        return _set_operations
 
-    return class_decorator
+    return set_operations
 
 
 broadcast   = operations_provider(wrap.broadcast)
